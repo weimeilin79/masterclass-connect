@@ -1,0 +1,43 @@
+input:
+  kafka_franz:
+    seed_brokers: [ ${RP_ADDRESS} ] 
+    topics: ["raw_error"]
+    consumer_group: "rpcn-lab2" 
+pipeline:
+  processors:
+    - bloblang: |
+        root = this
+        root.priority = match this {
+            this.source_system == "payment_gateway" && this.message == "Server latency detected."   => 1 ,
+            this.source_system == "payment_gateway" ||  this.source_system == "inventory_system" => 2 ,
+            this.source_system == "auth_service"  => 3 ,
+            _ => 4,
+        }
+    - bloblang: |
+        root = this
+        map simplify {
+          root = this
+          root.code = this.code
+          root.description = this.description
+        }
+        root.errors = this.errors.map_each(error -> error.apply("simplify"))
+    - log:
+        level: INFO
+        message: "Priority: ${! priority }"
+output:
+  switch:
+    cases:
+      - check: this.priority <= 3 
+        output:
+          kafka_franz:
+            seed_brokers: [ ${RP_ADDRESS} ] 
+            topic: "backend_error" 
+      - output:
+          fallback:
+            - reject_errored:
+                kafka_franz:
+                  seed_brokers: [ ${RP_ADDRESS} ] 
+                  topic: "DLQ" 
+            - http_client:
+                url: http://localhost:1234/notexist
+                retries: 1
