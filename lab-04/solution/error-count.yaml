@@ -1,0 +1,17 @@
+input:
+  http_server:
+    path: /error/count
+    allowed_verbs:
+      - POST
+    timeout: 1s
+    address: 0.0.0.0:8082
+pipeline:
+  processors:
+    - log:
+        level: INFO
+        message: "Received request: ${! json() }"
+    - mapping: |
+        root.status = 200
+        root.message = "Success" 
+output:
+  sync_response: {}
