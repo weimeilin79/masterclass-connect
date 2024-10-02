@@ -16,10 +16,10 @@ services:
       # from inside the same Docker network.
       # Use the external addresses to connect to the Redpanda brokers'
       # from outside the Docker network.
-      - --advertise-kafka-addr internal://redpanda-0:9092,external://redpanda:19092
+      - --advertise-kafka-addr internal://redpanda-0:9092,external://localhost:19092
       - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
       # Address the broker advertises to clients that connect to the HTTP Proxy.
-      - --advertise-pandaproxy-addr internal://redpanda-0:8082,external://redpanda:18082
+      - --advertise-pandaproxy-addr internal://redpanda-0:8082,external://localhost:18082
       - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
       # Redpanda brokers use the RPC API to communicate with each other internally.
       - --rpc-addr redpanda-0:33145
@@ -29,7 +29,7 @@ services:
       # Tells Seastar (the framework Redpanda uses under the hood) to use 1 core on the system.
       - --smp 1
       - --default-log-level=info
-    image: docker.redpanda.com/redpandadata/redpanda:v24.2.4
+    image: docker.redpanda.com/redpandadata/redpanda:v24.2.5
     container_name: redpanda-0
     volumes:
       - redpanda-0:/var/lib/redpanda/data
@@ -45,9 +45,9 @@ services:
       - redpanda
       - start
       - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:29092
-      - --advertise-kafka-addr internal://redpanda-1:9092,external://redpanda:29092
+      - --advertise-kafka-addr internal://redpanda-1:9092,external://localhost:29092
       - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:28082
-      - --advertise-pandaproxy-addr internal://redpanda-1:8082,external://redpanda:28082
+      - --advertise-pandaproxy-addr internal://redpanda-1:8082,external://localhost:28082
       - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:28081
       - --rpc-addr redpanda-1:33145
       - --advertise-rpc-addr redpanda-1:33145
@@ -55,7 +55,7 @@ services:
       - --smp 1
       - --default-log-level=info
       - --seeds redpanda-0:33145
-    image: docker.redpanda.com/redpandadata/redpanda:v24.2.4
+    image: docker.redpanda.com/redpandadata/redpanda:v24.2.5
     container_name: redpanda-1
     volumes:
       - redpanda-1:/var/lib/redpanda/data
@@ -73,9 +73,9 @@ services:
       - redpanda
       - start
       - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:39092
-      - --advertise-kafka-addr internal://redpanda-2:9092,external://redpanda:39092
+      - --advertise-kafka-addr internal://redpanda-2:9092,external://localhost:39092
       - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:38082
-      - --advertise-pandaproxy-addr internal://redpanda-2:8082,external://redpanda:38082
+      - --advertise-pandaproxy-addr internal://redpanda-2:8082,external://localhost:38082
       - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:38081
       - --rpc-addr redpanda-2:33145
       - --advertise-rpc-addr redpanda-2:33145
@@ -83,7 +83,7 @@ services:
       - --smp 1
       - --default-log-level=info
       - --seeds redpanda-0:33145
-    image: docker.redpanda.com/redpandadata/redpanda:v24.2.4
+    image: docker.redpanda.com/redpandadata/redpanda:v24.2.5
     container_name: redpanda-2
     volumes:
       - redpanda-2:/var/lib/redpanda/data
