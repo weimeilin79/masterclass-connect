@@ -1,0 +1,9 @@
+cache_resources:
+  - label: geocache
+    memory:
+      init_values:
+        1 : '[{"country": "Japan", "city": "Tokyo", "timezone": "JST"},{"country": "China", "city": "Beijing", "timezone": "CST"},{"country": "South Korea", "city": "Seoul", "timezone": "KST"},{"country": "India", "city": "Mumbai", "timezone": "IST"},{"country": "Singapore", "city": "Singapore", "timezone": "SGT"}]'
+        2: '[{"country": "South Africa", "city": "Johannesburg", "timezone": "SAST"},{"country": "Nigeria", "city": "Lagos", "timezone": "WAT"},{"country": "Kenya", "city": "Nairobi", "timezone": "EAT"},{"country": "Ethiopia", "city": "Addis Ababa", "timezone": "EAT"},{"country": "Ghana", "city": "Accra", "timezone": "GMT"}]'
+        3: '[{"country": "Germany", "city": "Berlin", "timezone": "CET"},{"country": "France", "city": "Paris", "timezone": "CET"},{"country": "United Kingdom", "city": "London", "timezone": "GMT"},{"country": "Italy", "city": "Rome", "timezone": "CET"},{"country": "Spain", "city": "Madrid", "timezone": "CET"}]'
+        4: '[{"country": "United States", "city": "New York", "timezone": "EST"},{"country": "Canada", "city": "Toronto", "timezone": "EST"},{"country": "Mexico", "city": "Mexico City", "timezone": "CST"},{"country": "Cuba", "city": "Havana", "timezone": "CST"},{"country": "Jamaica", "city": "Kingston", "timezone": "EST"}]'
+        5: '[{"country": "Brazil", "city": "Brasilia", "timezone": "BRT"},{"country": "Argentina", "city": "Buenos Aires", "timezone": "ART"},{"country": "Colombia", "city": "Bogota", "timezone": "COT"},{"country": "Peru", "city": "Lima", "timezone": "PET"},{"country": "Chile", "city": "Santiago", "timezone": "CLT"}]'      

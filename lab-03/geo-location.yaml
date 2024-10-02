@@ -1,0 +1,32 @@
+input:
+  http_server:
+    path: /geo/lookup
+    allowed_verbs:
+      - POST
+    timeout: 10s
+    address: 0.0.0.0:8081
+pipeline:
+  processors:
+    - log:
+        level: INFO
+        message: "Received request: ${! json() }"
+    - mapping: |
+        root = this
+        root.ip_continent = this.ip.split(".").index(2)
+        meta ip_city = this.ip.split(".").index(3)
+    - branch:
+        processors:
+          - cache:
+              resource: geocache
+              operator: get
+              key: '${! json("ip_continent") }'
+        result_map: |
+          root.geo_info = match this {
+            meta("ip_city").number() < 51 => this.index(0),
+            meta("ip_city").number() < 101 => this.index(1),
+            meta("ip_city").number() < 151 => this.index(2),
+            meta("ip_city").number() < 201 => this.index(3),
+            _ => this.index(4)
+          }
+output:
+  sync_response: {}
