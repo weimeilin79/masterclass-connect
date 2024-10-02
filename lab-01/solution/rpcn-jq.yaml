@@ -1,0 +1,30 @@
+input:
+  file:
+    paths: [ ${LOG_FILE} ] 
+    scanner:
+      lines: {}
+pipeline:
+  processors: 
+    - log:
+        level: INFO
+        message: Logging message from file -> ${! message }
+    - jq:
+        query: 'del(.reference, .machine_code, .request_id)'
+        raw: false
+output:
+  switch:
+    cases:
+      - check: this.log_level == "ERROR"
+        output:
+          kafka_franz:
+            seed_brokers: [ ${RP_ADDRESS} ] 
+            topic: "raw_error" 
+      - check: this.log_level == "WARNING"
+        output:
+          kafka_franz:
+            seed_brokers: [ ${RP_ADDRESS} ] 
+            topic: "raw_warning" 
+      - output:
+          kafka_franz:
+            seed_brokers: [ ${RP_ADDRESS} ]
+            topic: "raw_info" 
