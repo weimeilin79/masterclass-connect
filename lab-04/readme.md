@@ -1,6 +1,6 @@
 ## Use Case:
 You are tasked with building a streaming pipeline to handle error data by grouping and aggregating it based on the `source_system`. Additionally, you need to return to the original file consumption pipeline and control the rate at which log data is processed to make it easier to observe the results over time.
-![Screenshot 2024-10-01 at 10.21.24 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/Screenshot%202024-10-01%20at%2010.21.24%E2%80%AFPM.png)
+![Screenshot 2024-10-01 at 10.21.24 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/35fad0e2657427ede4afdf6a2367b2e9/assets/Screenshot%202024-10-01%20at%2010.21.24%E2%80%AFPM.png)
 
 Here’s what the input payload looks like from the `backend_error_geo` topic:
 ```
@@ -155,7 +155,7 @@ rpk connect streams -e .env -r cache-config.yaml geo-location.yaml error-count.y
 - **Updated rate limiting pipeline**: The log file entries in the first pipeline will be consumed at a controlled rate, this  slowed processing will allow you to observe the effects of rate limiting in real-time.
 
 When running the pipeline,  you should see it continuously printout error summary for all source system every 3 seconds.
-![Screenshot 2024-10-02 at 12.04.10 AM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/Screenshot%202024-10-02%20at%2012.04.10%E2%80%AFAM.png)
+![Screenshot 2024-10-02 at 12.04.10 AM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/3bc1a58a238d8ae68c8cc08987698c9b/assets/Screenshot%202024-10-02%20at%2012.04.10%E2%80%AFAM.png)
 
 This setup allows for efficient, real-time aggregation of streaming data while applying rate limits to control log consumption, optimizing both visibility and performance.
 

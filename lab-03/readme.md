@@ -2,7 +2,7 @@
 Build a streaming pipeline that processes backend error data from Redpanda in real-time. You need to enrich your log entries by adding geo-location data based on the client's IP address. You’ll achieve this by sending HTTP requests to an external API and caching the results to optimize performance. And at the same time send the log to an error count service by making HTTP requests to another external services. Additionally, you must implement caching to avoid redundant API calls for frequently encountered IP addresses, optimizing the pipeline’s performance.
 
 
-![Screenshot 2024-10-01 at 10.21.13 PM.png](../assets/Screenshot%202024-10-01%20at%2010.21.13%E2%80%AFPM.png)
+![Screenshot 2024-10-01 at 10.21.13 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/31d50ba2769bfe620e28c7d10f38e238/assets/Screenshot%202024-10-01%20at%2010.21.13%E2%80%AFPM.png)
 
 This is what the input payload looks like from the `backend_error`  topic:
 ```copy
@@ -141,7 +141,7 @@ rpk connect streams -e .env rpcn-01.yaml rpcn-02.yaml
 For each message, geo-location data will be enriched using an external API, with caching applied to avoid redundant lookups. The caching mechanism will significantly reduce the number of API calls for frequently encountered IPs, improving the pipeline’s efficiency. The enriched messages will be produced to the `backend_error_geo` topic, ready for further processing or analysis.
 
 In  [button label="Redpanda Console"](tab-2), under topic `backend_error_geo`, you should see data ingested, with geo_location data added to each entry
-![Screenshot 2024-10-02 at 12.01.56 AM.png](../assets/Screenshot%202024-10-02%20at%2012.01.56%E2%80%AFAM.png)
+![Screenshot 2024-10-02 at 12.01.56 AM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/c19bceae520b179bf78b6d7376ea7d36/assets/Screenshot%202024-10-02%20at%2012.01.56%E2%80%AFAM.png)
 
 This setup ensures efficient, real-time enrichment of streaming data while optimizing performance with caching for repeated geo-location lookups.
 
@@ -212,6 +212,6 @@ rpk connect run -e .env rpcn.yaml
 ```
 
 This pipeline does not have any logs, simply go to [button label="Redpanda Console"](tab-2) and the result in `backend_error_geo` topic.
-![Screenshot 2024-10-02 at 12.01.56 AM.png](../assets/Screenshot%202024-10-02%20at%2012.01.56%E2%80%AFAM.png)
+![Screenshot 2024-10-02 at 12.01.56 AM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/Screenshot%202024-10-02%20at%2012.01.56%E2%80%AFAM.png)
 
 Type `ctrl+c` to shutdown the pipeline.

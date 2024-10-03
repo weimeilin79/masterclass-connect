@@ -9,7 +9,7 @@ notes:
   contents: |2
 
     <p align="center">
-      <img src="../assets/no-time-panda-removebg-preview.png" />
+      <img src="https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/no-time-panda-removebg-preview.png" />
     </p>
 
 
@@ -52,7 +52,7 @@ Your organization is processing logs from various systems such as:
 
 Logs originating from the **payment_gateway** system, especially those related to latency errors, should be given higher priority. Based on the source system, you'll assign priorities to each log and remove redundant details for streamlined processing.
 
-![Screenshot 2024-10-01 at 10.13.02 PM.png](../assets/Screenshot%202024-10-01%20at%2010.13.02%E2%80%AFPM.png)
+![Screenshot 2024-10-01 at 10.13.02 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/0f89f3fc70947c8be7deb9e971faaeb2/assets/Screenshot%202024-10-01%20at%2010.13.02%E2%80%AFPM.png)
 
 In this lab, you will categorize errors by priority, remove unnecessary details from the error codes, and send processed logs to different outputs (Redpanda topic, HTTP endpoint). Additionally, logs that fail will be handled by a Dead Letter Queue (`DLQ`).
 
@@ -191,9 +191,9 @@ cd /root/masterclass-connect/lab-02
 ## Expected Outcome:
 - **Frontend logs** will fail and are routed to a Dead Letter Queue(DLQ).
 - In  [button label="Redpanda Console"](tab-2), under `backend_error` topic, you should see data ingested with the priority added and the error messages simplified.
-![Screenshot 2024-10-01 at 11.50.26 PM.png](../assets/Screenshot%202024-10-01%20at%2011.50.26%E2%80%AFPM.png)
+![Screenshot 2024-10-01 at 11.50.26 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6bd593a411982ddd075ee4327162755/assets/Screenshot%202024-10-01%20at%2011.50.26%E2%80%AFPM.png)
 - In the `DLQ`, you'll find a couple of logs with `web_frontend` as `source_system`.
-![Screenshot 2024-10-01 at 11.50.59 PM.png](../assets/Screenshot%202024-10-01%20at%2011.50.59%E2%80%AFPM.png)
+![Screenshot 2024-10-01 at 11.50.59 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/Screenshot%202024-10-01%20at%2011.50.59%E2%80%AFPM.png)
 
 This configuration ensures that data can be transformed and routed dynamically based on its contents, providing flexibility and scalability in real-time data processing workflows.
 

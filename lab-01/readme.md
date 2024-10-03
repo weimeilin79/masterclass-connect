@@ -1,6 +1,6 @@
 ## Use Case:
 Your organization needs to monitor server logs in real-time to detect issues, errors, and suspicious activities.
-![Screenshot 2024-10-01 at 10.12.16 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/Screenshot%202024-10-01%20at%2010.12.16%E2%80%AFPM.png)
+![Screenshot 2024-10-01 at 10.12.16 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/a9314ea8fff4a0eb4c6617124460583c/assets/Screenshot%202024-10-01%20at%2010.12.16%E2%80%AFPM.png)
 Here's a sample error:
 ```nocopy
 {
@@ -122,11 +122,11 @@ cd /root/masterclass-connect/lab-01
 ## Expected Outcome:
 Logs are dynamically logged, split, and routed to Redpanda topic. The message  is rerouted based on the `log_level`.
 In  [button label="Redpanda Console"](tab-2), under topic, you should see logs in the 3 newly created topics:
-![Screenshot 2024-10-01 at 11.54.30 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/Screenshot%202024-10-01%20at%2011.54.30%E2%80%AFPM.png)
+![Screenshot 2024-10-01 at 11.54.30 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/b8cb5f32719be7ffd306230e93b1ee96/assets/Screenshot%202024-10-01%20at%2011.54.30%E2%80%AFPM.png)
 - raw_error
 - raw_warning
 - raw_info
-![Screenshot 2024-10-01 at 11.49.54 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/Screenshot%202024-10-01%20at%2011.49.54%E2%80%AFPM.png)
+![Screenshot 2024-10-01 at 11.49.54 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/4f03274e1c954a12e23e81443fe2316a/assets/Screenshot%202024-10-01%20at%2011.49.54%E2%80%AFPM.png)
 This setup enables real-time ingestion of streaming data from Redpanda, ensuring seamless integration into the pipeline, and efficiently preparing the data for further transformation and processing.
 
 Solution
