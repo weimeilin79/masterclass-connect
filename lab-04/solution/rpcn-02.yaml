@@ -5,7 +5,7 @@ input:
     consumer_group: "rpcn-lab2" 
 pipeline:
   processors:
-    - bloblang: |
+    - mapping: |
         root = this
         root.priority = match this {
             this.source_system == "payment_gateway" && this.message == "Server latency detected."   => 1 ,
@@ -13,7 +13,7 @@ pipeline:
             this.source_system == "auth_service"  => 3 ,
             _ => 4,
         }
-    - bloblang: |
+    - mapping: |
         root = this
         map simplify {
           root = this
