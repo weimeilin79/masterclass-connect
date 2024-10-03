@@ -70,6 +70,7 @@ Here’s what the incoming payload looks like:
 ```
 
 ## Objective:
+- Gets individual log from a Redpanda topic `raw_error`.
 - Categorize logs by source system and assign priority.
 - Drop logs from **web_frontend** as they are not required for further processing.
 - Remove all detailed information from error messages, keeping only the error code and description.
@@ -83,21 +84,23 @@ Here’s what the incoming payload looks like:
 >   ```
 
 ## Steps:
+- Consume data from topic `raw_error`
 - Add  a `priority` field based on the `source_system`, assign a priority level to the logs:
-            - `payment_gateway` with latency errors message `Server latency detected.` : **Priority = 1**
-            - `payment_gateway` and `inventory_system`: **Priority = 2**
-            - `auth_service`: **Priority = 3**
-            - others **Priority = 4**
+  - `source_system` = `payment_gateway` with latency errors (`message` = `Server latency detected.`) : **Priority = 1**
+  - `source_system` = `payment_gateway` or `source_system` = `inventory_system`: **Priority = 2**
+  - `source_system` = `auth_service`: **Priority = 3**
+  - others **Priority = 4**
+
 For example, for a  `payment_gateway` log with a message `Server latency detected.`, you will assign a priority of 1.
 Here's an example payload:
 ```nocopy
 {
-    ...
-    "priority": 1,
-    "source_system": "payment_gateway",
-    "message":"Server latency detected."
-    "timestamp": "2024-10-01T16:23:21Z"
-    ...
+   ...
+   "priority": 1,
+   "source_system": "payment_gateway",
+   "message":"Server latency detected."
+   "timestamp": "2024-10-01T16:23:21Z"
+   ...
 }
 ```
 - **Removing Detailed Error Information**: Simplify the error messages by removing the `details` field from each error object, while keeping only the `code` and `description`.
@@ -117,6 +120,11 @@ After:
   "description": "Invalid Credentials"
 }
 ```
+- Route the transformed logs,
+  - If priority are smaller and equal to 3, send them to the `backend_error` topic
+  - Send the rest to an non-existing HTTP Endpoint `http://localhost:1234/notexist`, since this does not exist, you will need to implement a Dead Letter Queue (DLQ), simply send the failed message to the `DLQ` topic in Redpanda.
+
+
 
 In the [button label="Editor"](tab-1), under the working directory (`~/masterclass-connec/lab-02`), you should see a `rpcn.yaml` file. Go ahead and create your pipeline in it. To test and run the pipeline, simply go to the [button label="Terminal"](tab-0) and run:
 
@@ -126,6 +134,8 @@ rpk connect run -e .env rpcn.yaml
 ```
 
 ## Test your pipeline:
+
+
 ### Start Redpanda
 Check if your Redpanda streaming platform is running by going to the [button label="Redpanda Console"](tab-2), If it’s not running, please execute the following command:
 ```bash,run
@@ -133,6 +143,62 @@ cd /root/masterclass-connect
 docker-compose up -d
 cd /root/masterclass-connect/lab-02
 ```
+
+### During development
+Sometimes it'll be easier to control the input before you actually configure the input, you can either do that by defining a unit test or simply replace the input with `stdin`:
+
+```yaml,copy
+input:
+  stdin:
+    scanner:
+       lines: {}
+output:
+  stdout: {}
+```
+
+And here is a log for you to test the mapping:
+```json,run
+{"timestamp": "2024-09-30T20:55:11Z", "event_id": "cb323fed-610a-4115-b427-17a6b502320f", "source_system": "payment_gateway", "client_ip": "192.168.1.4", "log_level": "ERROR", "message": "Server latency detected.", "context": {"user_id": "user685", "path": "/profile", "method": "GET", "status_code": 403}, "errors": [{"code": "W001", "description": "High Latency", "details": "The server is experiencing high latency."}, {"code": "E408", "description": "Request Timeout", "details": "The request timed out."}, {"code": "W002", "description": "Slow Response", "details": "The server responded but took longer than expected."}, {"code": "E504", "description": "Gateway Timeout", "details": "The upstream server failed to respond in time."}, {"code": "E509", "description": "Bandwidth Limit Exceeded", "details": "The server has exceeded its bandwidth limits."}], "metadata": [{"key": "browser", "value": "Chrome"}, {"key": "os", "value": "Windows"}]}
+```
+
+You should see something like below in the output:
+```json,nocopy
+{
+   ....
+   "errors":[
+      {
+         "code":"W001",
+         "description":"High Latency",
+         "details":"The server is experiencing high latency."
+      },
+      {
+         "code":"E408",
+         "description":"Request Timeout",
+         "details":"The request timed out."
+      },
+      {
+         "code":"W002",
+         "description":"Slow Response",
+         "details":"The server responded but took longer than expected."
+      },
+      {
+         "code":"E504",
+         "description":"Gateway Timeout",
+         "details":"The upstream server failed to respond in time."
+      },
+      {
+         "code":"E509",
+         "description":"Bandwidth Limit Exceeded",
+         "details":"The server has exceeded its bandwidth limits."
+      }
+   ],
+   .....
+   "priority":1,
+   "source_system":"payment_gateway",
+   "timestamp":"2024-09-30T20:55:11Z"
+}
+```
+
 ### Feeding more data
 You can feed the topic with more data by re-running the previous pipeline. Go to  [button label="Terminal A"](tab-3)
 ```bash,run
@@ -164,7 +230,7 @@ input:
     consumer_group: "rpcn-lab2"
 pipeline:
   processors:
-    - bloblang: |
+    - mapping: |
         root = this
         root.priority = match this {
             this.source_system == "payment_gateway" && this.message == "Server latency detected."   => 1 ,
@@ -172,7 +238,7 @@ pipeline:
             this.source_system == "auth_service"  => 3 ,
             _ => 4,
         }
-    - bloblang: |
+    - mapping: |
         root = this
         map simplify {
           root = this

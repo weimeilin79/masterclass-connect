@@ -92,28 +92,28 @@ Here’s what the input payload looks like from the `backend_error_geo` topic:
 
 ## Steps:
 - **Build the Aggregation Pipeline**:
-    - Configure the pipeline to consume data from a Redpanda topic.
-    - Use a grouping mechanism to group the data by the `source_system` field.
-    - Implement logic to aggregate the data, calculating:
-        - The unique number of IP addresses.
-            ```nocopy
-            {
-                "source_system" : "inventory_system",
-                "error_count" : 36
-            }
-            ```
-        - The count of messages with priority levels 1, 2, and 3.
-            ```nocopy
-            {
-                "priority_01" : 5,
-                "priority_02" : 2,
-                "priority_03" : 6
-            }
-            ```
-    - Use the default tumbling window strategy to produce aggregated results every **3** seconds.
+  - Configure the pipeline to consume data from a Redpanda topic.
+  - Use a grouping mechanism to group the data by the `source_system` field.
+  - Implement logic to aggregate the data, calculating:
+    - The unique number of IP addresses.
+      ```nocopy
+      {
+        "source_system" : "inventory_system",
+        "error_count" : 36
+      }
+      ```
+    - The count of messages with priority levels 1, 2, and 3.
+      ```nocopy
+      {
+        "priority_01" : 5,
+        "priority_02" : 2,
+        "priority_03" : 6
+      }
+      ```
+  - Use the default tumbling window strategy to produce aggregated results every **3** seconds.
 
 - **Implement the Rate Limiting Pipeline**:
-    - Set the pipeline processes  `100` lines of log entries every `2` seconds, slowing down the consumption rate to observe the impact over time. (You'll find a file named `rpcn-01.yaml` that you can update.)
+  - Set the pipeline processes  `100` lines of log entries every `2` seconds, slowing down the consumption rate to observe the impact over time. (You'll find a file named `rpcn-01.yaml` that you can update.)
 
 In the [button label="Editor"](tab-1), under the working directory (`~/masterclass-connect/lab-04`), you should see a `rpcn.yaml` file. Go ahead and create your pipeline in it. To test and run the pipeline, simply go to the [button label="Terminal"](tab-0) and run:
 
@@ -139,6 +139,34 @@ cd /root/masterclass-connect
 docker-compose up -d
 cd /root/masterclass-connect/lab-04
 ```
+
+### During development
+Sometimes it’s easier to control the input before configuring it. You can either do that by defining a unit test or simply replace the input with `stdin`:
+
+```yaml,copy
+input:
+  stdin:
+    scanner:
+       lines: {}
+output:
+  stdout: {}
+```
+
+And here is a log for you to test the mapping:
+```json,run
+{"client_ip":"192.168.1.95","context":{"method":"DELETE","path":"/profile","status_code":403,"user_id":"user476"},"errors":[{"code":"E401","description":"Unauthorized","details":"User tried to access restricted resource."},{"code":"E002","description":"Invalid Credentials","details":"Password does not match the user account."},{"code":"E403","description":"Forbidden","details":"User does not have access to this resource."},{"code":"E406","description":"Not Acceptable","details":"Content type or encoding not acceptable."},{"code":"E407","description":"Proxy Authentication Required","details":"User must authenticate with a proxy server."}],"event_id":"597c85b9-ef83-42a0-ae94-20c69e0684bf","geo_info":{"city":"Beijing","country":"China","timezone":"CST"},"log_level":"ERROR","message":"Unauthorized access attempt detected.","meta":{"workflow":{"succeeded":["error_count","geo_location"]}},"metadata":[{"key":"browser","value":"Safari"},{"key":"os","value":"macOS"}],"priority":3,"source_system":"auth_service","timestamp":"2024-09-30T20:47:11Z"}
+{"client_ip":"192.168.1.54","context":{"method":"GET","path":"/profile","status_code":404,"user_id":"user513"},"errors":[{"code":"W001","description":"High Latency","details":"The server is experiencing high latency."},{"code":"E408","description":"Request Timeout","details":"The request timed out."},{"code":"W002","description":"Slow Response","details":"The server responded but took longer than expected."},{"code":"E504","description":"Gateway Timeout","details":"The upstream server failed to respond in time."},{"code":"E509","description":"Bandwidth Limit Exceeded","details":"The server has exceeded its bandwidth limits."}],"event_id":"168bee86-ea3e-4a4f-af4f-fc7f440f12bf","geo_info":{"city":"Beijing","country":"China","timezone":"CST"},"log_level":"ERROR","message":"Server latency detected.","meta":{"workflow":{"succeeded":["error_count","geo_location"]}},"metadata":[{"key":"browser","value":"Chrome"},{"key":"os","value":"Android"}],"priority":1,"source_system":"payment_gateway","timestamp":"2024-09-30T20:39:11Z"}
+{"client_ip":"192.168.1.67","context":{"method":"POST","path":"/profile","status_code":401,"user_id":"user657"},"errors":[{"code":"W001","description":"High Latency","details":"The server is experiencing high latency."},{"code":"E408","description":"Request Timeout","details":"The request timed out."},{"code":"W002","description":"Slow Response","details":"The server responded but took longer than expected."},{"code":"E504","description":"Gateway Timeout","details":"The upstream server failed to respond in time."},{"code":"E509","description":"Bandwidth Limit Exceeded","details":"The server has exceeded its bandwidth limits."}],"event_id":"a162c648-50c3-4896-9e1f-390aa5c1ecd4","geo_info":{"city":"Beijing","country":"China","timezone":"CST"},"log_level":"ERROR","message":"Server latency detected.","meta":{"workflow":{"succeeded":["error_count","geo_location"]}},"metadata":[{"key":"browser","value":"Chrome"},{"key":"os","value":"macOS"}],"priority":2,"source_system":"inventory_system","timestamp":"2024-09-30T21:40:11Z"}
+{"client_ip":"192.168.1.114","context":{"method":"PUT","path":"/profile","status_code":408,"user_id":"user411"},"errors":[{"code":"E404","description":"Not Found","details":"The requested resource was not found."},{"code":"E500","description":"Server Error","details":"Internal server error occurred."},{"code":"E505","description":"HTTP Version Not Supported","details":"The server does not support the HTTP version used."},{"code":"E502","description":"Bad Gateway","details":"Received an invalid response from the upstream server."},{"code":"E503","description":"Service Unavailable","details":"The server is temporarily unavailable."}],"event_id":"ff034c36-5bb8-417c-ab9d-1a39eb5cbd3e","geo_info":{"city":"Seoul","country":"South Korea","timezone":"KST"},"log_level":"ERROR","message":"Page not found.","meta":{"workflow":{"succeeded":["error_count","geo_location"]}},"metadata":[{"key":"browser","value":"Edge"},{"key":"os","value":"Android"}],"priority":2,"source_system":"inventory_system","timestamp":"2024-09-30T21:42:11Z"}
+```
+
+You should see something like below in the output:
+```json,nocopy
+{"error_count":1,"priority_01":0,"priority_02":0,"priority_03":1,"source_system":"auth_service"}
+{"error_count":1,"priority_01":1,"priority_02":0,"priority_03":0,"source_system":"payment_gateway"}
+{"error_count":2,"priority_01":0,"priority_02":2,"priority_03":0,"source_system":"inventory_system"}
+```
+
 ### Feeding more data
 You can feed new data into the system, In  [button label="Terminal A"](tab-3) run:
 ```bash,run
@@ -150,8 +178,8 @@ rpk connect streams -e .env -r cache-config.yaml geo-location.yaml error-count.y
 
 ## Expected Outcome:
 - **Aggregation Pipeline**: The pipeline will continuously process error data from Redpanda, group it by source_system, and output an aggregated summary at regular intervals using windowing. The summary will include:
-    - A count of unique IP addresses.
-    - The number of messages with different priority levels.
+  - A count of unique IP addresses.
+  - The number of messages with different priority levels.
 - **Updated rate limiting pipeline**: The log file entries in the first pipeline will be consumed at a controlled rate, this  slowed processing will allow you to observe the effects of rate limiting in real-time.
 
 When running the pipeline,  you should see it continuously printout error summary for all source system every 3 seconds.
@@ -163,7 +191,7 @@ Solution
 ===
 
 Here is one possible solution:
-```copy,yaml
+```yaml,copy
 input:
   kafka_franz:
     seed_brokers: [ ${RP_ADDRESS} ]

@@ -62,25 +62,25 @@ This is what the input payload looks like from the `backend_error`  topic:
 ## Objective  :
 - Consume error data from the Redpanda topic `backend_error`.
 - Enrich the data with geo-location and error count by querying external APIs:
-    - **URL**: `http://localhost:8081/geo/lookup`
-    - **verb**: `POST`
-    - **payload**:
-    ```nocopy
-      {"ip":"192.168.5.190"}
-    ```
+  - **URL**: `http://localhost:8081/geo/lookup`
+  - **verb**: `POST`
+  - **payload**:
+  ```nocopy
+    {"ip":"192.168.5.190"}
+  ```
 - Implement caching for geo-location lookups to avoid repeated HTTP requests.
 - Send data to an external error count service via HTTP requests in parallel:
-    - **URL**: `http://localhost:8082/error/count`
-    - **verb**: `POST`
-    - **payload**:
-    ```nocopy
-    {
-        "ip":"192.168.2.12",
-        "message":"Page not found.",
-        "priority":2,
-        "source_system":"inventory_system"
-    }
-    ```
+  - **URL**: `http://localhost:8082/error/count`
+  - **verb**: `POST`
+  - **payload**:
+  ```nocopy
+  {
+    "ip":"192.168.2.12",
+    "message":"Page not found.",
+    "priority":2,
+    "source_system":"inventory_system"
+  }
+  ```
 - Output the enriched data to the Redpanda topic `backend_error_geo`.
 
 > [!IMPORTANT]
@@ -90,18 +90,19 @@ This is what the input payload looks like from the `backend_error`  topic:
 >   ```
 
 ## Steps:
+- Consume error data from the Redpanda topic `backend_error`.
 - Cache configuration:
-    - Implement caching for geo-location lookups using an in-**memory** cache.
+  - Implement caching for geo-location lookups using an in-**memory** cache.
 - Geo-location enrichment:
-        - Extract the `client_ip` from the incoming message.
-        - Check if the `client_ip` has already been cached.
-        - If the IP address is not cached, send an HTTP POST request to `http://localhost:8081/geo/lookup` to retrieve geo-location information.
+    - Extract the `client_ip` from the incoming message.
+    - Check if the `client_ip` has already been cached.
+    - If the IP address is not cached, send an HTTP POST request to `http://localhost:8081/geo/lookup` to retrieve geo-location information.
 - Parallel processing for error count :
-    -  Use a workflow to allow parallel calls.
-    - Extract necessary fields (`client_ip`, `source_system`, `message`, `priority`) from the message.
-    - Send an HTTP POST request to `http://localhost:8082/error/count` to update the error count for the system.
+  -  Use a workflow to allow parallel calls.
+  - Extract necessary fields (`client_ip`, `source_system`, `message`, `priority`) from the message.
+  - Send an HTTP POST request to `http://localhost:8082/error/count` to update the error count for the system.
 - Output Configuration:
-    - After enrichment, output the processed data to the Redpanda topic `backend_error_geo`.
+  - After enrichment, output the processed data to the Redpanda topic `backend_error_geo`.
 
 In the [button label="Editor"](tab-1), under the working directory (`~/masterclass-connect/lab-03`), you should see a `rpcn.yaml` file. Go ahead and create your pipeline in it. To test and run the pipeline, simply go to the [button label="Terminal"](tab-0) and run:
 
@@ -128,6 +129,48 @@ cd /root/masterclass-connect/lab-03
 rpk connect streams -r cache-config.yaml error-count.yaml  geo-location.yaml
 ```
 These services are also written in Redpanda Connect—feel free to take a look at how they are implemented in the [button label="Editor"](tab-1)
+
+### During development
+Sometimes it’s easier to control the input before configuring it. You can either do that by defining a unit test or simply replace the input with `stdin`:
+
+```yaml,copy
+input:
+  stdin:
+    scanner:
+       lines: {}
+output:
+  stdout: {}
+```
+
+And here is a log for you to test the mapping:
+```json,run
+{"client_ip":"192.168.1.4","context":{"method":"GET","path":"/profile","status_code":403,"user_id":"user685"},"errors":[{"code":"W001","description":"High Latency","details":"The server is experiencing high latency."},{"code":"E408","description":"Request Timeout","details":"The request timed out."},{"code":"W002","description":"Slow Response","details":"The server responded but took longer than expected."},{"code":"E504","description":"Gateway Timeout","details":"The upstream server failed to respond in time."},{"code":"E509","description":"Bandwidth Limit Exceeded","details":"The server has exceeded its bandwidth limits."}],"event_id":"cb323fed-610a-4115-b427-17a6b502320f","log_level":"ERROR","message":"Server latency detected.","metadata":[{"key":"browser","value":"Chrome"},{"key":"os","value":"Windows"}],"priority":1,"source_system":"payment_gateway","timestamp":"2024-09-30T20:55:11Z"}
+```
+You should see something like below in the output:
+```json,nocopy
+{
+   "client_ip":"192.168.1.4",
+   ...
+   "geo_info":{
+      "city":"Tokyo",
+      "country":"Japan",
+      "timezone":"JST"
+   },
+   ..
+   "meta":{
+      "workflow":{
+         "succeeded":[
+            "error_count",
+            "geo_location"
+         ]
+      }
+   },
+   ...
+   "priority":1,
+   "source_system":"payment_gateway",
+   "timestamp":"2024-09-30T20:55:11Z"
+}
+```
 
 ### Feeding more data
 You can feed the topic with more data by re-running the previous pipeline. Go to  [button label="Terminal B"](tab-4) run:

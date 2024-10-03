@@ -85,18 +85,18 @@ Here's what the log file looks like
 ## Steps:
 
 -  Read log entries from the file:
-    -  Use the `file` input to read server logs from `log_entries.txt`.
+   -  Use the `file` input to read server logs from `log_entries.txt`.
 -  Split log entries:
-    -  Split the file content into individual log lines.
+   -  Split the file content into individual log lines.
 -  Log each entry:
-    -  Add a `log` processor to monitor each log entry.
+   -  Add a `log` processor to monitor each log entry.
 - Extract log data :
-    - Use a `jq` or `mapping` to filter the unwanted field, `reference`, `machine_code` and `request_id`
+   - Use a `jq` or `mapping` to filter the unwanted field, `reference`, `machine_code` and `request_id`
 - Route logs to Redpanda topics:
-    - Route logs to Kafka topics based on their severity.
-        - Logs with level `ERROR` to `raw_error`
-        - Logs with level `WARNING` to `raw_warning`
-        -  Logs with level `INFO` to `raw_info`
+   - Route logs to Kafka topics based on their severity.
+      - Logs with level `ERROR` to `raw_error`
+      - Logs with level `WARNING` to `raw_warning`
+      -  Logs with level `INFO` to `raw_info`
 
 In the [button label="Editor"](tab-1), under the working directory (`~/masterclass-connect/lab-01`), you should see a `rpcn.yaml` file. Go ahead and create your pipeline in it. To test and run the pipeline, simply go to the [button label="Terminal"](tab-0) and run:
 
@@ -170,7 +170,7 @@ You can view the `log_entries.txt` file under the `lab-01` folder in the [button
 ### Running the solution
 To run this, simply go to the solution folder, and in the [button label="Terminal"](tab-0) run:
 ```bash,run
+source /root/.bash_profile
 cd /root/masterclass-connect/lab-01/solution
 rpk connect run -e .env rpcn.yaml
 ```
-
