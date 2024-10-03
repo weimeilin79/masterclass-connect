@@ -212,6 +212,6 @@ rpk connect run -e .env rpcn.yaml
 ```
 
 This pipeline does not have any logs, simply go to [button label="Redpanda Console"](tab-2) and the result in `backend_error_geo` topic.
-![Screenshot 2024-10-02 at 12.01.56 AM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/Screenshot%202024-10-02%20at%2012.01.56%E2%80%AFAM.png)
+![Screenshot 2024-10-02 at 12.01.56 AM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/c19bceae520b179bf78b6d7376ea7d36/assets/Screenshot%202024-10-02%20at%2012.01.56%E2%80%AFAM.png)
 
 Type `ctrl+c` to shutdown the pipeline.

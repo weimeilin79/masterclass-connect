@@ -1,48 +1,3 @@
----
-slug: separating-frontend-and-backend
-id: bby81du37aln
-type: challenge
-title: Separating logs for further analysis
-teaser: Error handling with DLQ and complex mappings
-notes:
-- type: text
-  contents: |2
-
-    <p align="center">
-      <img src="https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/no-time-panda-removebg-preview.png" />
-    </p>
-
-
-    Running out of time?
-
-    Don’t worry! This lab is available on demand, so feel free to bookmark it and come back anytime!
-
-    While the storyline in this lab is shared, each module is independent, so you don’t need to complete one before moving on to the next.
-tabs:
-- id: btikcumd6ogi
-  title: Terminal
-  type: terminal
-  hostname: server
-  workdir: /root/masterclass-connect/lab-02
-  cmd: bash; source /root/.bash_profile
-- id: wsoqjnyaivty
-  title: Editor
-  type: code
-  hostname: server
-  path: /root/masterclass-connect/lab-02
-- id: bxct5b1joxmr
-  title: Redpanda Console
-  type: service
-  hostname: server
-  port: 8080
-- id: zipj59iw689k
-  title: Terminal A
-  type: terminal
-  hostname: server
-  workdir: /root/masterclass-connect/lab-02
-  cmd: bash; source /root/.bash_profile
-difficulty: ""
----
 ## Use Case:
 Your organization is processing logs from various systems such as:
 -  payment_gateway,
@@ -193,7 +148,7 @@ cd /root/masterclass-connect/lab-02
 - In  [button label="Redpanda Console"](tab-2), under `backend_error` topic, you should see data ingested with the priority added and the error messages simplified.
 ![Screenshot 2024-10-01 at 11.50.26 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6bd593a411982ddd075ee4327162755/assets/Screenshot%202024-10-01%20at%2011.50.26%E2%80%AFPM.png)
 - In the `DLQ`, you'll find a couple of logs with `web_frontend` as `source_system`.
-![Screenshot 2024-10-01 at 11.50.59 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/d6a7961f75347ce415334d55dddb7925/assets/Screenshot%202024-10-01%20at%2011.50.59%E2%80%AFPM.png)
+![Screenshot 2024-10-01 at 11.50.59 PM.png](https://play.instruqt.com/assets/tracks/pw95vxordilg/dc4ad350c1d566fd830846ea888b3b53/assets/Screenshot%202024-10-01%20at%2011.50.59%E2%80%AFPM.png)
 
 This configuration ensures that data can be transformed and routed dynamically based on its contents, providing flexibility and scalability in real-time data processing workflows.
 
